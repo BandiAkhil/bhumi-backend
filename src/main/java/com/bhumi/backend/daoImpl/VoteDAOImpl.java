@@ -1,7 +1,7 @@
 package com.bhumi.backend.daoImpl;
 
 import com.bhumi.backend.dao.VoteCumstomDAO;
-import com.bhumi.backend.modal.Vote;
+import com.bhumi.backend.repository.Vote;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

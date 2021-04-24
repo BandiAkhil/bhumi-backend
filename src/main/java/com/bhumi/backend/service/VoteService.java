@@ -3,7 +3,7 @@ package com.bhumi.backend.service;
 import com.bhumi.backend.dao.PostDAO;
 import com.bhumi.backend.dao.UserDAO;
 import com.bhumi.backend.dao.VoteDAO;
-import com.bhumi.backend.modal.Vote;
+import com.bhumi.backend.repository.Vote;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,13 +33,6 @@ public class VoteService {
             throw new RuntimeException("Post with id " + postId + " was not found");
         }
         return voteDAO.findAllByPost(postId);
-    }
-
-    public List<Vote> getAllUserVotes(Long userId) {
-        if(!userDAO.existsById(userId)) {
-            throw new RuntimeException("User with id " + userId + " was not found");
-        }
-        return voteDAO.findAllByUser(userId);
     }
 
     public Vote getVoteById(Long id) {

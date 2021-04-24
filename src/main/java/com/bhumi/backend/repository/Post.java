@@ -1,4 +1,8 @@
-package com.bhumi.backend.modal;
+package com.bhumi.backend.repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -78,7 +82,14 @@ public class Post implements Serializable {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", date=" + date +
-                ", imageUrl='" + imageUrl +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
+    }
+
+    public String toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper.valueToTree(this).toString();
     }
 }

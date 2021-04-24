@@ -1,4 +1,8 @@
-package com.bhumi.backend.modal;
+package com.bhumi.backend.repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,8 +14,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(unique = true)
     private String username;
     private String password;
     @Column(nullable = false, updatable = false)
@@ -90,5 +95,12 @@ public class User {
                 ", created=" + created +
                 ", role=" + role +
                 '}';
+    }
+
+    public String toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper.valueToTree(this).toString();
     }
 }

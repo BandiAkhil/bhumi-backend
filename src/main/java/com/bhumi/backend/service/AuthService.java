@@ -1,35 +1,44 @@
 package com.bhumi.backend.service;
 
-import com.bhumi.backend.dao.UserDAO;
-import com.bhumi.backend.modal.User;
+import com.bhumi.backend.repository.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Enumeration;
 
 @Service
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDAO userDAO;
+    private final AdminService adminService;
 
     @Autowired
-    public AuthService(PasswordEncoder passwordEncoder, UserDAO userDAO) {
+    public AuthService(PasswordEncoder passwordEncoder, AdminService adminService) {
         this.passwordEncoder = passwordEncoder;
-        this.userDAO = userDAO;
+        this.adminService = adminService;
     }
 
     @Transactional
     public User signup(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(LocalDate.now());
-        user.setRole("User");
-        return userDAO.save(user);
+        user.setRole("USER");
+        return adminService.addUser(user);
     }
 
-    public void login(User user) {
-
+    public boolean login(HttpServletRequest request) {
+        Enumeration<String> names = request.getAttributeNames();
+        for (String name : Collections.list(names)) {
+            System.out.println("Attribute Name: " + name);
+            System.out.println("Attribute Value: " + request.getAttribute(name));
+        }
+        String username = request.getAttribute("username").toString();
+        User user = adminService.getUserByUsernameOrEmail(username, username);
+        return user != null && passwordEncoder.matches(request.getAttribute("password").toString(), user.getPassword());
     }
 }

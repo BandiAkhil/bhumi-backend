@@ -1,6 +1,6 @@
-package com.bhumi.backend.api;
+package com.bhumi.backend.controller;
 
-import com.bhumi.backend.modal.Comment;
+import com.bhumi.backend.repository.Comment;
 import com.bhumi.backend.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,12 +51,6 @@ public class CommentController {
         } else {
             return Arrays.asList(comment);
         }
-    }
-
-    @GetMapping("user/{id}/comments")
-    public ResponseEntity<List<Comment>> getAllUserComments(@PathVariable("id") Long id) {
-        List<Comment> comments = commentService.getAllUserComments(id);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     @PostMapping("posts/{id}/comments")

@@ -1,7 +1,7 @@
 package com.bhumi.backend.daoImpl;
 
 import com.bhumi.backend.dao.CommentCustomDAO;
-import com.bhumi.backend.modal.Comment;
+import com.bhumi.backend.repository.Comment;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

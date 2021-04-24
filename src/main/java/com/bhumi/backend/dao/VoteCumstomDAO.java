@@ -1,6 +1,6 @@
 package com.bhumi.backend.dao;
 
-import com.bhumi.backend.modal.Vote;
+import com.bhumi.backend.repository.Vote;
 
 import java.util.List;
 

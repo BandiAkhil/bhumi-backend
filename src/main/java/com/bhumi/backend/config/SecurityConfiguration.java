@@ -17,13 +17,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
             .authorizeRequests()
-            .antMatchers("/api/auth/admin/**").authenticated()
-            .anyRequest().permitAll();
+                .antMatchers("/api/posts", "/api/forums").permitAll()
+                .antMatchers("/api/auth/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/auth/**").hasAnyRole("ADMIN", "USER")
+                .and()
+            .formLogin()
+                .loginPage("/api/auth/login")
+                .permitAll()
+                .and()
+//            .logout()
+//                .permitAll()
+//                .and()
+            .httpBasic();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("admin").password("adminpass").roles("ADMIN");
+        String bcryptPass = this.passwordEncoder().encode("adminpass");
+        auth.inMemoryAuthentication().withUser("admin").password(bcryptPass).roles("ADMIN");
     }
 
     @Bean

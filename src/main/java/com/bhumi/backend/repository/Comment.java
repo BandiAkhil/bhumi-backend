@@ -1,5 +1,8 @@
-package com.bhumi.backend.modal;
+package com.bhumi.backend.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -100,11 +103,18 @@ public class Comment implements Serializable {
         return "Comment{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
-//                ", post=" + post +
+                ", post=" + post +
                 ", parentCommentId=" + parentCommentId +
-//                ", user=" + user +
+                ", user=" + user +
                 ", votes=" + votes +
-//                ", updated=" + updated +
+                ", updated=" + updated +
                 '}';
+    }
+
+    public String toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper.valueToTree(this).toString();
     }
 }

@@ -3,10 +3,7 @@ package com.bhumi.backend.service;
 import com.bhumi.backend.dao.CommentDAO;
 import com.bhumi.backend.dao.PostDAO;
 import com.bhumi.backend.dao.UserDAO;
-import com.bhumi.backend.dto.CommentDTO;
-import com.bhumi.backend.modal.Comment;
-import com.bhumi.backend.modal.Post;
-import com.bhumi.backend.modal.User;
+import com.bhumi.backend.repository.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +31,6 @@ public class CommentService {
 
     public List<Comment> getChildComments(Long parentId) {
         return commentDAO.findAllChildComments(parentId);
-    }
-
-    public List<Comment> getAllUserComments(Long userId) {
-        if(!userDAO.existsById(userId)) {
-            throw new RuntimeException("User with id " + userId + " was not found");
-        }
-        return commentDAO.findAllByUser(userId);
     }
 
     public Comment getCommentById(Long id) {

@@ -1,6 +1,6 @@
 package com.bhumi.backend.dao;
 
-import com.bhumi.backend.modal.Comment;
+import com.bhumi.backend.repository.Comment;
 
 import java.util.List;
 

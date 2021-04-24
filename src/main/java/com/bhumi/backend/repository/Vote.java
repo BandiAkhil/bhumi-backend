@@ -1,5 +1,6 @@
-package com.bhumi.backend.modal;
+package com.bhumi.backend.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -61,5 +62,9 @@ public class Vote {
                 ", post=" + post +
                 ", user=" + user +
                 '}';
+    }
+
+    public String toJson() {
+        return new ObjectMapper().valueToTree(this).toString();
     }
 }
