@@ -1,8 +1,10 @@
-package com.bhumi.backend.repository;
+package com.bhumi.backend.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -22,6 +24,7 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDate created;
     @Column(nullable = false)
+    @ColumnDefault("USER")
     private String role;
 
     public User() {

@@ -1,6 +1,6 @@
 package com.bhumi.backend.controller;
 
-import com.bhumi.backend.repository.Post;
+import com.bhumi.backend.entity.Post;
 import com.bhumi.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();
         return new ResponseEntity<>(posts, HttpStatus.OK);

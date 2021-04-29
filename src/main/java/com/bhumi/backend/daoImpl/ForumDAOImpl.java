@@ -1,7 +1,8 @@
 package com.bhumi.backend.daoImpl;
 
 import com.bhumi.backend.dao.ForumCustomDAO;
-import com.bhumi.backend.repository.Forum;
+import com.bhumi.backend.entity.Forum;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class ForumDAOImpl implements ForumCustomDAO {
 
     @Override
     public List<Forum> findAllByUser(Long userId) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.user_id = :id", Forum.class);
+        Query query = entityManager.createNativeQuery("SELECT * FROM forum f WHERE f.user_id = :id", Forum.class);
         query.setParameter("id", userId);
         return query.getResultList();
     }

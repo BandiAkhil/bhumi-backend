@@ -1,4 +1,4 @@
-package com.bhumi.backend.repository;
+package com.bhumi.backend.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -77,13 +77,8 @@ public class Post implements Serializable {
 
     @Override
     public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", date=" + date +
-                ", imageUrl='" + imageUrl + '\'' +
-                '}';
+        return "Post [body=" + body + ", date=" + date + ", id=" + id + ", imageUrl=" + imageUrl + ", title=" + title
+                + "]";
     }
 
     public String toJson() {

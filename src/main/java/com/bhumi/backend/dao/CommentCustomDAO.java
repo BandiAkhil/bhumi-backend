@@ -1,11 +1,10 @@
 package com.bhumi.backend.dao;
 
-import com.bhumi.backend.repository.Comment;
-
 import java.util.List;
+
+import com.bhumi.backend.entity.Comment;
 
 public interface CommentCustomDAO {
     List<Comment> findAllByUser(Long userId);
-    List<Comment> findAllParentComments();
-    List<Comment> findAllChildComments(Long parentId);
+    List<Comment> findAllPostComments(Long postId);
 }

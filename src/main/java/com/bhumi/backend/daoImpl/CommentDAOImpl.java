@@ -1,7 +1,8 @@
 package com.bhumi.backend.daoImpl;
 
 import com.bhumi.backend.dao.CommentCustomDAO;
-import com.bhumi.backend.repository.Comment;
+import com.bhumi.backend.entity.Comment;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +26,9 @@ public class CommentDAOImpl implements CommentCustomDAO {
     }
 
     @Override
-    public List<Comment> findAllParentComments() {
-        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.parent_comment_id IS null ORDER BY c.votes DESC", Comment.class);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Comment> findAllChildComments(Long parentId) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.parent_comment_id = :id ORDER BY c.votes DESC", Comment.class);
-        query.setParameter("id", parentId);
+    public List<Comment> findAllPostComments(Long postId) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.post_id = :id ORDER BY (SELECT COUNT(v.id) FROM vote v WHERE v.post_id = :id) DESC", Comment.class);
+        query.setParameter("id", postId);
         return query.getResultList();
     }
 }

@@ -1,7 +1,8 @@
 package com.bhumi.backend.controller;
 
-import com.bhumi.backend.repository.Post;
-import com.bhumi.backend.repository.User;
+import com.bhumi.backend.entity.Post;
+import com.bhumi.backend.entity.User;
+import com.bhumi.backend.entity.Vote;
 import com.bhumi.backend.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/auth/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -19,44 +20,50 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PostMapping("/posts/add")
+    @PostMapping("/posts")
     public ResponseEntity<Post> addPost(@RequestBody Post post) {
         Post newPost = adminService.addPost(post);
         return new ResponseEntity<>(newPost, HttpStatus.CREATED);
     }
 
-    @PutMapping("/posts/{id}/update")
+    @PutMapping("/posts/{id}")
     public ResponseEntity<Post> updatePost(@PathVariable("id") Long id, @RequestBody Post post) {
         post.setId(id);
         Post updatePost = adminService.updatePost(post);
         return new ResponseEntity<>(updatePost, HttpStatus.OK);
     }
 
-    @DeleteMapping("/posts/{id}/delete")
+    @DeleteMapping("/posts/{id}")
     public ResponseEntity<?> deletePostById(@PathVariable("id") Long id) {
         adminService.deletePostById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/posts/{postId}/comments/{commentId}/delete")
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<?> deleteCommentById(@PathVariable("commentId") Long commentId) {
         adminService.deleteCommentById(commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/forum/{id}/delete")
+    @DeleteMapping("/forum/{id}")
     public ResponseEntity<?> deleteForumById(@PathVariable("id") Long id) {
         adminService.deleteForumById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("forums/{forumId}/forumAnswers/{forumAnswerId}/delete")
+    @DeleteMapping("forums/{forumId}/forumAnswers/{forumAnswerId}")
     public ResponseEntity<?> deleteForumAnswerById(@PathVariable("forumAnswerId") Long id) {
         adminService.deleteForumAnswerById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("users/all")
+    @GetMapping("posts/{id}/votes")
+    public ResponseEntity<List<Vote>> getAllPostVotes(@PathVariable("id") Long id) {
+        List<Vote> votes = adminService.getAllPostVotes(id);
+        return new ResponseEntity<>(votes, HttpStatus.OK);
+    }
+
+    @GetMapping("users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = adminService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -68,20 +75,20 @@ public class AdminController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("users/add")
+    @PostMapping("users")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         User newUser = adminService.addUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-    @PutMapping("users/{id}/update")
+    @PutMapping("users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
         User updateUser = adminService.updateUser(user);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("users/{id}/delete")
+    @DeleteMapping("users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
         adminService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,12 +1,14 @@
 package com.bhumi.backend.service;
 
-import com.bhumi.backend.repository.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.bhumi.backend.entity.User;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Enumeration;

@@ -1,10 +1,11 @@
 package com.bhumi.backend.service;
 
 import com.bhumi.backend.dao.*;
-import com.bhumi.backend.repository.Comment;
-import com.bhumi.backend.repository.Forum;
-import com.bhumi.backend.repository.ForumAnswer;
-import com.bhumi.backend.repository.Vote;
+import com.bhumi.backend.entity.Comment;
+import com.bhumi.backend.entity.Forum;
+import com.bhumi.backend.entity.ForumAnswer;
+import com.bhumi.backend.entity.Vote;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

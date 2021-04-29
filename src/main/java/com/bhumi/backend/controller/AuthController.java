@@ -1,6 +1,6 @@
 package com.bhumi.backend.controller;
 
-import com.bhumi.backend.repository.User;
+import com.bhumi.backend.entity.User;
 import com.bhumi.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

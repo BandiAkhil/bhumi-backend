@@ -1,6 +1,7 @@
 package com.bhumi.backend.dao;
 
-import com.bhumi.backend.repository.Comment;
+import com.bhumi.backend.entity.Comment;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

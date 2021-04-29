@@ -1,24 +1,27 @@
 package com.bhumi.backend.service;
 
+import com.bhumi.backend.dao.CommentDAO;
 import com.bhumi.backend.dao.PostDAO;
-import com.bhumi.backend.dao.UserDAO;
 import com.bhumi.backend.dao.VoteDAO;
-import com.bhumi.backend.repository.Vote;
-import org.springframework.stereotype.Service;
+import com.bhumi.backend.dto.VoteDTO;
+import com.bhumi.backend.entity.Vote;
+import com.bhumi.backend.mapper.VoteMapper;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class VoteService {
 
     private final VoteDAO voteDAO;
-    private final UserDAO userDAO;
     private final PostDAO postDAO;
+    private final CommentDAO commentDAO;
+    private final VoteMapper voteMapper;
 
-    public VoteService(VoteDAO voteDAO, UserDAO userDAO, PostDAO postDAO) {
+    public VoteService(VoteDAO voteDAO, PostDAO postDAO, CommentDAO commentDAO, VoteMapper voteMapper) {
         this.voteDAO = voteDAO;
-        this.userDAO = userDAO;
         this.postDAO = postDAO;
+        this.commentDAO = commentDAO;
+        this.voteMapper = voteMapper;
     }
 
     public Integer getPostVoteCount(Long postId) {
@@ -28,22 +31,27 @@ public class VoteService {
         return (int) voteDAO.countByPost(postId);
     }
 
-    public List<Vote> getAllPostVotes(Long postId) {
-        if(!postDAO.existsById(postId)) {
-            throw new RuntimeException("Post with id " + postId + " was not found");
+    public Integer getCommentVoteCount(Long commentId) {
+        if(!commentDAO.existsById(commentId)) {
+            throw new RuntimeException("Comment with id " + commentId + " was not found");
         }
-        return voteDAO.findAllByPost(postId);
+        return (int) voteDAO.countByComment(commentId);
     }
 
-    public Vote getVoteById(Long id) {
-        return voteDAO.findById(id).orElseThrow(() -> new RuntimeException("Comment by id " + id + " was not found"));
+    public VoteDTO getVoteById(Long id) {
+        Vote resultVote = voteDAO.findById(id).orElseThrow(() -> new RuntimeException("Comment by id " + id + " was not found"));
+        return voteMapper.EntityToDto(resultVote);
     }
 
-    public Vote addVote(Vote vote) {
-        if(!postDAO.existsById(vote.getPost().getId())) {
-            throw new RuntimeException("Post with id " + vote.getPost().getId() + " was not found");
+    public VoteDTO addVote(VoteDTO vote) {
+        if(vote.getPostId() != null && voteDAO.duplicatePostVote(vote.getPostId(), vote.getUserId())) {
+            return null;
+        } else if(vote.getCommentId() != null && voteDAO.duplicateCommentVote(vote.getCommentId(), vote.getUserId())) {
+            return null;
         }
-        return voteDAO.save(vote);
+        Vote voteEntity = voteMapper.DtoToEntity(vote);
+        Vote resultVote = voteDAO.save(voteEntity);
+        return voteMapper.EntityToDto(resultVote);
     }
 
     public void deleteVote(Long id) {

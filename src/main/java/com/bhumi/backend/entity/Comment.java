@@ -1,8 +1,9 @@
-package com.bhumi.backend.repository;
+package com.bhumi.backend.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,28 +19,26 @@ public class Comment implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
     private String text;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
-    private Long parentCommentId;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User user;
-    private Integer votes;
     private LocalDate updated;
+    private Long parentCommentId;
 
     public Comment() {
     }
 
-    public Comment(Long id, String text, Post post, Long parentCommentId, User user, Integer votes, LocalDate updated) {
+    public Comment(Long id, String text, Post post, User user, LocalDate updated, Long parentCommentId) {
         this.id = id;
         this.text = text;
         this.post = post;
-        this.parentCommentId = parentCommentId;
         this.user = user;
-        this.votes = votes;
         this.updated = updated;
+        this.parentCommentId = parentCommentId;
     }
 
     public Long getId() {
@@ -66,28 +65,12 @@ public class Comment implements Serializable {
         this.post = post;
     }
 
-    public Long getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public void setParentCommentId(Long parentCommentId) {
-        this.parentCommentId = parentCommentId;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Integer getVotes() {
-        return votes;
-    }
-
-    public void setVotes(Integer votes) {
-        this.votes = votes;
     }
 
     public LocalDate getUpdated() {
@@ -98,17 +81,28 @@ public class Comment implements Serializable {
         this.updated = updated;
     }
 
+    public Long getParentCommentId() {
+        return parentCommentId;
+    }
+
+    public void setParentCommentId(Long parentCommentId) {
+        this.parentCommentId = parentCommentId;
+    }
+
     @Override
     public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", text='" + text + '\'' +
-                ", post=" + post +
-                ", parentCommentId=" + parentCommentId +
-                ", user=" + user +
-                ", votes=" + votes +
-                ", updated=" + updated +
-                '}';
+        return "Comment [id=" + id
+                + ", parentCommentId=" + parentCommentId + ", post=" + post + ", text=" + text + ", updated=" + updated
+                + ", user=" + user + "]";
+    }
+
+    @Override
+    public boolean equals(Object anObject) {
+        if (!(anObject instanceof Comment)) {
+            return false;
+        }
+        Comment otherMember = (Comment) anObject;
+        return otherMember.getId().equals(this.getId());
     }
 
     public String toJson() {

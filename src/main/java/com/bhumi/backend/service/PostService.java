@@ -1,7 +1,8 @@
 package com.bhumi.backend.service;
 
 import com.bhumi.backend.dao.PostDAO;
-import com.bhumi.backend.repository.Post;
+import com.bhumi.backend.entity.Post;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

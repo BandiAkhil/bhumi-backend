@@ -1,72 +1,59 @@
 package com.bhumi.backend.controller;
 
-import com.bhumi.backend.repository.Comment;
+import com.bhumi.backend.dto.CommentDTO;
+import com.bhumi.backend.dto.VoteDTO;
 import com.bhumi.backend.service.CommentService;
+import com.bhumi.backend.service.VoteService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/posts")
 public class CommentController {
 
     private final CommentService commentService;
+    private final VoteService voteService;
 
     @Autowired
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, VoteService voteService) {
         this.commentService = commentService;
+        this.voteService = voteService;
     }
 
-    @GetMapping("posts/{id}/comments")
-    public ResponseEntity<List<List<Comment>>> getAllPostComments(@PathVariable("id") Long id) {
-        List<List<Comment>> result = new ArrayList<>();
-        List<Comment> parentComments = commentService.getAllParentComments();
-        for (Comment comment: parentComments) {
-            List<Comment> temp = recursiveCommentThreads(comment);
-            System.out.println(temp);
-            result.add(temp);
-        }
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentDTO>> getAllPostComments(@PathVariable("id") Long id) {
+        List<CommentDTO> comments = commentService.getAllPostComments(id);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
-    public List<Comment> recursiveCommentThreads(Comment comment) {
-        List<Comment> result = new ArrayList<>();
-        List<Comment> children = commentService.getChildComments(comment.getId());
-        //System.out.println(comment);
-        //System.out.println(children);
-        if (children.size() != 0) {
-            List<Comment> childList = new ArrayList<>();
-            for (Comment child: children) {
-                childList.addAll(recursiveCommentThreads(child));
-            }
-            result.add(0, comment);
-            result.addAll(childList);
-            System.out.println("{ comment: " + comment.getId() + " children: { " + childList + " }");
-            return result;
-        } else {
-            return Arrays.asList(comment);
-        }
+    @GetMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentDTO> getCommentById(@PathVariable("commentId") Long id) {
+        CommentDTO comment = commentService.getCommentDTOById(id);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
-    @PostMapping("posts/{id}/comments")
-    public ResponseEntity<Comment> addComment(@RequestBody Comment comment) {
-        Comment newComment = commentService.addComment(comment);
+    @PostMapping("/{postId}/comments")
+    public ResponseEntity<CommentDTO> addComment(@PathVariable("postId") Long id, @RequestBody CommentDTO comment) {
+        comment.setPostId(id);
+        CommentDTO newComment = commentService.addComment(comment);
+        voteService.addVote(new VoteDTO(null, newComment.getId(), null, null, newComment.getUserId()));
         return new ResponseEntity<>(newComment, HttpStatus.OK);
     }
 
-    @PutMapping("posts/{postId}/comments/{commentId}/update")
-    public ResponseEntity<Comment> updateCommentById(@PathVariable("commentId") Long id, @RequestBody Comment comment) {
-        comment.setId(id);
-        Comment commentUpdate = commentService.updateComment(comment);
+    @PutMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentDTO> updateCommentById(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId, @RequestBody CommentDTO comment) {
+        comment.setPostId(postId);
+        comment.setId(commentId);
+        CommentDTO commentUpdate = commentService.updateComment(comment);
         return new ResponseEntity<>(commentUpdate, HttpStatus.OK);
     }
 
-    @DeleteMapping("posts/{postId}/comments/{commentId}/delete")
+    @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<?> deleteCommentById(@PathVariable("commentId") Long commentId) {
         commentService.deleteCommentById(commentId);
         return new ResponseEntity<>(HttpStatus.OK);

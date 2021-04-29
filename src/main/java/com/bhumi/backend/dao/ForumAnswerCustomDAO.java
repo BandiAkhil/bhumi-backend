@@ -1,8 +1,8 @@
 package com.bhumi.backend.dao;
 
-import com.bhumi.backend.repository.ForumAnswer;
-
 import java.util.List;
+
+import com.bhumi.backend.entity.ForumAnswer;
 
 public interface ForumAnswerCustomDAO {
     List<ForumAnswer> findAllByUser(Long userId);

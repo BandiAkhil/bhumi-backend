@@ -1,7 +1,8 @@
 package com.bhumi.backend.service;
 
 import com.bhumi.backend.dao.*;
-import com.bhumi.backend.repository.*;
+import com.bhumi.backend.entity.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +17,16 @@ public class AdminService {
     private final CommentDAO commentDAO;
     private final ForumDAO forumDAO;
     private final ForumAnswerDAO forumAnswerDAO;
+    private final VoteDAO voteDAO;
     private final UserDAO userDAO;
 
     @Autowired
-    public AdminService(PostDAO postDAO, CommentDAO commentDAO, ForumDAO forumDAO, ForumAnswerDAO forumAnswerDAO, UserDAO userDAO) {
+    public AdminService(PostDAO postDAO, CommentDAO commentDAO, ForumDAO forumDAO, ForumAnswerDAO forumAnswerDAO, VoteDAO voteDAO, UserDAO userDAO) {
         this.postDAO = postDAO;
         this.commentDAO = commentDAO;
         this.forumDAO = forumDAO;
         this.forumAnswerDAO = forumAnswerDAO;
+        this.voteDAO = voteDAO;
         this.userDAO = userDAO;
     }
 
@@ -58,6 +61,13 @@ public class AdminService {
         forumAnswerDAO.deleteById(id);
     }
 
+    public List<Vote> getAllPostVotes(Long postId) {
+        if(!postDAO.existsById(postId)) {
+            throw new RuntimeException("Post with id " + postId + " was not found");
+        }
+        return voteDAO.findAllByPost(postId);
+    }
+
     public List<User> getAllUsers() {
         return userDAO.findAll();
     }
@@ -79,13 +89,13 @@ public class AdminService {
     }
 
     public User addUser(User user) {
-        //user.setRole("USER");
+        user.setRole("USER");
         user.setCreated(LocalDate.now());
         return userDAO.save(user);
     }
 
     public User updateUser(User user) {
-        //user.setRole("USER");
+        user.setRole("USER");
         User original = this.getUserById(user.getId());
         user.setCreated(original.getCreated());
         return userDAO.save(user);

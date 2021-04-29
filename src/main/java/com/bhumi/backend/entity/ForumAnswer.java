@@ -1,4 +1,4 @@
-package com.bhumi.backend.repository;
+package com.bhumi.backend.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -7,17 +7,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-public class Forum implements Serializable {
+public class ForumAnswer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
-    @Column(nullable = false)
-    private String title;
     @Lob
     private String body;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -25,20 +22,19 @@ public class Forum implements Serializable {
     private User user;
     @Column(nullable = false)
     private LocalDate date;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "forum_answer_id")
-    private List<ForumAnswer> answers;
+    @ManyToOne
+    @JoinColumn(name = "forum_id")
+    private Forum forum;
 
-    public Forum() {
+    public ForumAnswer() {
     }
 
-    public Forum(Long id, String title, String body, User user, LocalDate date, List<ForumAnswer> answers) {
+    public ForumAnswer(Long id, String body, User user, LocalDate date, Forum forum) {
         this.id = id;
-        this.title = title;
         this.body = body;
         this.user = user;
         this.date = date;
-        this.answers = answers;
+        this.forum = forum;
     }
 
     public Long getId() {
@@ -47,14 +43,6 @@ public class Forum implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getBody() {
@@ -81,23 +69,22 @@ public class Forum implements Serializable {
         this.date = date;
     }
 
-    public List<ForumAnswer> getAnswers() {
-        return answers;
+    public Forum getForum() {
+        return forum;
     }
 
-    public void setAnswers(List<ForumAnswer> answers) {
-        this.answers = answers;
+    public void setForum(Forum forum) {
+        this.forum = forum;
     }
 
     @Override
     public String toString() {
-        return "Forum{" +
+        return "ForumAnswer{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", user=" + user +
                 ", date=" + date +
-                ", answers=" + answers +
+                ", forum=" + forum +
                 '}';
     }
 
