@@ -24,20 +24,21 @@ public class Comment implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-    private LocalDate updated;
+    private LocalDate date;
     private Long parentCommentId;
 
     public Comment() {
     }
 
-    public Comment(Long id, String text, Post post, User user, LocalDate updated, Long parentCommentId) {
+    public Comment(Long id, String text, Post post, User user, LocalDate date, Long parentCommentId) {
         this.id = id;
         this.text = text;
         this.post = post;
         this.user = user;
-        this.updated = updated;
+        this.date = date;
         this.parentCommentId = parentCommentId;
     }
 
@@ -73,12 +74,12 @@ public class Comment implements Serializable {
         this.user = user;
     }
 
-    public LocalDate getUpdated() {
-        return updated;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setUpdated(LocalDate updated) {
-        this.updated = updated;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public Long getParentCommentId() {
@@ -92,7 +93,7 @@ public class Comment implements Serializable {
     @Override
     public String toString() {
         return "Comment [id=" + id
-                + ", parentCommentId=" + parentCommentId + ", post=" + post + ", text=" + text + ", updated=" + updated
+                + ", parentCommentId=" + parentCommentId + ", post=" + post + ", text=" + text + ", date=" + date
                 + ", user=" + user + "]";
     }
 

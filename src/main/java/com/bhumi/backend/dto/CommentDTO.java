@@ -9,7 +9,7 @@ public class CommentDTO {
     private Long postId;
     private Long userId;
     private String username;
-    private LocalDate updated;
+    private LocalDate date;
     private Long parentCommentId;
     private int commentDepth;
     private int childCount;
@@ -57,12 +57,12 @@ public class CommentDTO {
         this.username = username;
     }
 
-    public LocalDate getUpdated() {
-        return updated;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setUpdated(LocalDate updated) {
-        this.updated = updated;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public Long getParentCommentId() {
@@ -92,7 +92,7 @@ public class CommentDTO {
     @Override
     public String toString() {
         return "CommentDTO [childCount=" + childCount + ", commentDepth=" + commentDepth + ", id=" + id
-                + ", parentCommentId=" + parentCommentId + ", postId=" + postId + ", text=" + text + ", updated="
-                + updated + ", userId=" + userId + ", username=" + username + "]";
+                + ", parentCommentId=" + parentCommentId + ", postId=" + postId + ", text=" + text + ", date="
+                + date + ", userId=" + userId + ", username=" + username + "]";
     }
 }

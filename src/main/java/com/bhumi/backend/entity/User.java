@@ -7,10 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-public class User {
+@Table(name = "user")
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -43,7 +43,7 @@ public class CommentMapperTest {
         commentDTO.setPostId(2L);
         commentDTO.setUserId(1L);
         commentDTO.setUsername("username");
-        commentDTO.setUpdated(LocalDate.now());
+        commentDTO.setDate(LocalDate.now());
         commentDTO.setParentCommentId(null);
         commentDTO.setChildCount(0);
         commentDTO.setCommentDepth(0);
