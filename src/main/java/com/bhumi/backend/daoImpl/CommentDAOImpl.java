@@ -27,7 +27,7 @@ public class CommentDAOImpl implements CommentCustomDAO {
 
     @Override
     public List<Comment> findAllPostComments(Long postId) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.post_id = :id ORDER BY (SELECT COUNT(v.id) FROM vote v WHERE v.post_id = :id) DESC", Comment.class);
+        Query query = entityManager.createNativeQuery("SELECT * FROM comment c WHERE c.post_id = :id ORDER BY (SELECT COUNT(v.id) FROM vote v WHERE v.comment_id = c.id) DESC", Comment.class);
         query.setParameter("id", postId);
         return query.getResultList();
     }

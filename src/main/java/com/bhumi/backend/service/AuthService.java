@@ -4,20 +4,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.bhumi.backend.entity.LoginRequest;
+import com.bhumi.backend.entity.LoginResponse;
+import com.bhumi.backend.config.JwtTokenUtil;
+import com.bhumi.backend.service.AuthService;
 import com.bhumi.backend.entity.User;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.Objects;
+
 
 @Service
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final AdminService adminService;
+
+    @Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
     @Autowired
     public AuthService(PasswordEncoder passwordEncoder, AdminService adminService) {
@@ -33,14 +51,28 @@ public class AuthService {
         return adminService.addUser(user);
     }
 
-    public boolean login(HttpServletRequest request) {
-        Enumeration<String> names = request.getAttributeNames();
-        for (String name : Collections.list(names)) {
-            System.out.println("Attribute Name: " + name);
-            System.out.println("Attribute Value: " + request.getAttribute(name));
-        }
-        String username = request.getAttribute("username").toString();
-        User user = adminService.getUserByUsernameOrEmail(username, username);
-        return user != null && passwordEncoder.matches(request.getAttribute("password").toString(), user.getPassword());
+    public LoginResponse login(LoginRequest request) throws Exception {
+        authenticate(request.getUsername(), request.getPassword());
+        System.out.println("AAAHA :::::: " + request);
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+		final String token = jwtTokenUtil.generateToken(userDetails);
+        return new LoginResponse(userDetails.getUsername(), token);
+    }
+
+    private void authenticate(String username, String password) throws Exception {
+		Objects.requireNonNull(username);
+		Objects.requireNonNull(password);
+		try {
+			Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
+		} catch (BadCredentialsException e) {
+			throw new Exception("INVALID_CREDENTIALS", e);
+		}
+	}
+
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return adminService.getUserByUsername(principal.getUsername());
     }
 }

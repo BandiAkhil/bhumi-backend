@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +13,7 @@ import javax.persistence.*;
                             @UniqueConstraint(columnNames ={"comment_id", "user_id"}),
                             @UniqueConstraint(columnNames ={"forum_id", "user_id"}),
                             @UniqueConstraint(columnNames ={"forum_answer_id", "user_id"})})
-public class Vote {
+public class Vote implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
