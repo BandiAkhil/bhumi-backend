@@ -32,17 +32,15 @@ public class ForumAnswerController {
     }
 
     @PostMapping("{id}/forum-answers")
-    public ResponseEntity<ForumAnswerDTO> addForumAnswer(@PathVariable("id") Long id, @RequestBody ForumAnswerDTO forumAnswer) {
-        forumAnswer.setForumId(id);
+    public ResponseEntity<ForumAnswerDTO> addForumAnswer(@RequestBody ForumAnswerDTO forumAnswer) {
         ForumAnswerDTO newForumAnswer = forumAnswerService.addForumAnswer(forumAnswer);
         voteService.addVote(new VoteDTO(null, null, null, newForumAnswer.getId(), newForumAnswer.getUserId()));
         return new ResponseEntity<>(newForumAnswer, HttpStatus.OK);
     }
 
     @PutMapping("{forumId}/forum-answers/{forumAnswerId}")
-    public ResponseEntity<ForumAnswerDTO> updateForumAnswerById(@PathVariable("forumId") Long forumId, @PathVariable("forumAnswerId") Long id, @RequestBody ForumAnswerDTO forumAnswer) {
+    public ResponseEntity<ForumAnswerDTO> updateForumAnswerById(@PathVariable("forumAnswerId") Long id, @RequestBody ForumAnswerDTO forumAnswer) {
         forumAnswer.setId(id);
-        forumAnswer.setForumId(forumId);
         ForumAnswerDTO forumAnswerUpdate = forumAnswerService.updateForumAnswer(forumAnswer);
         return new ResponseEntity<>(forumAnswerUpdate, HttpStatus.OK);
     }

@@ -89,12 +89,10 @@ public class CommentService {
 
     @Transactional
     public CommentDTO addComment(CommentDTO commentDTO) {
-        if(!postDAO.existsById(commentDTO.getPostId()) || (commentDTO.getParentCommentId() != null &&
-            (!commentDAO.existsById(commentDTO.getParentCommentId()) || 
-            commentDAO.findById(commentDTO.getParentCommentId()).get().getPost().getId() != commentDTO.getPostId()))) {
-            throw new RuntimeException("Invalid comment data!");
+        if(!postDAO.existsById(commentDTO.getPostId())) {
+            throw new RuntimeException("Post with id " + commentDTO.getPostId() + " was not found");
         }
-        commentDTO.setDate(LocalDate.now());
+        commentDTO.setUpdated(LocalDate.now());
         Comment commentEntity = commentMapper.DtoToEntity(commentDTO);
         Comment updated = commentDAO.save(commentEntity);
         return commentMapper.EntityToDto(updated);
@@ -102,12 +100,10 @@ public class CommentService {
 
     @Transactional
     public CommentDTO updateComment(CommentDTO commentDTO) {
-        if(!postDAO.existsById(commentDTO.getPostId()) || (commentDTO.getParentCommentId() != null &&
-            (!commentDAO.existsById(commentDTO.getParentCommentId()) || 
-            commentDAO.findById(commentDTO.getParentCommentId()).get().getPost().getId() != commentDTO.getPostId()))) {
-            throw new RuntimeException("Invalid comment data!");
+        if(!postDAO.existsById(commentDTO.getPostId())) {
+            throw new RuntimeException("Post with id " + commentDTO.getPostId() + " was not found");
         }
-        commentDTO.setDate(LocalDate.now());
+        commentDTO.setUpdated(LocalDate.now());
         Comment commentEntity = commentMapper.DtoToEntity(commentDTO);
         Comment updated = commentDAO.save(commentEntity);
         return commentMapper.EntityToDto(updated);

@@ -45,10 +45,8 @@ public class VoteService {
 
     public VoteDTO addVote(VoteDTO vote) {
         if(vote.getPostId() != null && voteDAO.duplicatePostVote(vote.getPostId(), vote.getUserId())) {
-            deleteVote(voteMapper.DtoToEntity(vote).getId());
             return null;
         } else if(vote.getCommentId() != null && voteDAO.duplicateCommentVote(vote.getCommentId(), vote.getUserId())) {
-            deleteVote(voteMapper.DtoToEntity(vote).getId());
             return null;
         }
         Vote voteEntity = voteMapper.DtoToEntity(vote);
