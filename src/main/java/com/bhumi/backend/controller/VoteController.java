@@ -29,7 +29,7 @@ public class VoteController {
         return new ResponseEntity<>(newVote, HttpStatus.OK);
     }
 
-    @GetMapping("posts/{postId}/comments/{commentId}/votes/count")
+    @GetMapping("comments/{commentId}/votes/count")
     public ResponseEntity<Integer> getCommentVoteCount(@PathVariable("commentId") Long id) {
         int voteCount = voteService.getCommentVoteCount(id);
         return new ResponseEntity<>(voteCount, HttpStatus.OK);

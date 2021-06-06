@@ -1,11 +1,16 @@
 package com.bhumi.backend.controller;
 
+import com.bhumi.backend.dto.CommentDTO;
+import com.bhumi.backend.dto.ForumAnswerDTO;
 import com.bhumi.backend.dto.ImageDTO;
+import com.bhumi.backend.entity.Comment;
 import com.bhumi.backend.entity.Post;
 import com.bhumi.backend.entity.User;
+import com.bhumi.backend.entity.Video;
 import com.bhumi.backend.entity.Vote;
 import com.bhumi.backend.service.AdminService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth/admin")
+@RequestMapping("api/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -54,46 +59,83 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("forums/{forumId}/forumAnswers/{forumAnswerId}")
+    @DeleteMapping("/forums/{forumId}/forumAnswers/{forumAnswerId}")
     public ResponseEntity<?> deleteForumAnswerById(@PathVariable("forumAnswerId") Long id) {
         adminService.deleteForumAnswerById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("posts/{id}/votes")
+    @GetMapping("/posts/{id}/votes")
     public ResponseEntity<List<Vote>> getAllPostVotes(@PathVariable("id") Long id) {
         List<Vote> votes = adminService.getAllPostVotes(id);
         return new ResponseEntity<>(votes, HttpStatus.OK);
     }
 
-    @GetMapping("users")
+    @GetMapping("/comments")
+    public ResponseEntity<List<CommentDTO>> getAllComments() {
+        List<CommentDTO> comments = adminService.getAllComments();
+        return new ResponseEntity<>(comments, HttpStatus.OK);
+    }
+
+    @GetMapping("/forum-answers")
+    public ResponseEntity<List<ForumAnswerDTO>> getAllForumAnswers() {
+        List<ForumAnswerDTO> forumAnswers = adminService.getAllForumAnswers();
+        return new ResponseEntity<>(forumAnswers, HttpStatus.OK);
+    }
+
+    @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = adminService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("users/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
         User user = adminService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("users")
+    @PostMapping("/users")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         User newUser = adminService.addUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-    @PutMapping("users/{id}")
+    @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
         User updateUser = adminService.updateUser(user);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("users/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
         adminService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/videos")
+    public ResponseEntity<List<Video>> getVideos() {
+        List<Video> videos = adminService.getAllVideos();
+        return new ResponseEntity<>(videos, HttpStatus.OK);
+    }
+
+    @PostMapping("/videos")
+    public ResponseEntity<Video> addVideo(@RequestBody Video video) {
+        Video newVideo = adminService.addVideo(video);
+        return new ResponseEntity<>(newVideo, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/videos/{id}")
+    public ResponseEntity<Video> updateVideo(@PathVariable Long id, @RequestBody Video video) {
+        video.setId(id);
+        Video updateVideo = adminService.updateVideo(video);
+        return new ResponseEntity<>(updateVideo, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/videos/{id}")
+    public ResponseEntity<?> deleteVideoById(@PathVariable("id") Long id) {
+        adminService.deleteVideoById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

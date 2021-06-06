@@ -1,8 +1,12 @@
 package com.bhumi.backend.service;
 
 import com.bhumi.backend.dao.*;
+import com.bhumi.backend.dto.CommentDTO;
+import com.bhumi.backend.dto.ForumAnswerDTO;
 import com.bhumi.backend.dto.ImageDTO;
 import com.bhumi.backend.entity.*;
+import com.bhumi.backend.mapper.CommentMapper;
+import com.bhumi.backend.mapper.ForumAnswerMapper;
 import com.bhumi.backend.mapper.ImageMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -33,15 +39,20 @@ public class AdminService implements UserDetailsService {
 
     private final PostDAO postDAO;
     private final CommentDAO commentDAO;
+    @Autowired
+    private CommentMapper commentMapper;
+    @Autowired
+    private ForumAnswerMapper forumAnswerMapper;
     private final ForumDAO forumDAO;
     private final ForumAnswerDAO forumAnswerDAO;
     private final VoteDAO voteDAO;
     private final UserDAO userDAO;
     private final ImageDAO imageDAO;
+    private final VideoDAO videoDAO;
     //private final ImageMapper imageMapper;
 
     @Autowired
-    public AdminService(PostDAO postDAO, CommentDAO commentDAO, ForumDAO forumDAO, ForumAnswerDAO forumAnswerDAO, VoteDAO voteDAO, UserDAO userDAO, ImageDAO imageDAO) {
+    public AdminService(PostDAO postDAO, CommentDAO commentDAO, ForumDAO forumDAO, ForumAnswerDAO forumAnswerDAO, VoteDAO voteDAO, UserDAO userDAO, ImageDAO imageDAO, VideoDAO videoDAO) {
         this.postDAO = postDAO;
         this.commentDAO = commentDAO;
         this.forumDAO = forumDAO;
@@ -49,6 +60,7 @@ public class AdminService implements UserDetailsService {
         this.voteDAO = voteDAO;
         this.userDAO = userDAO;
         this.imageDAO = imageDAO;
+        this.videoDAO = videoDAO;
     }
 
     @Transactional
@@ -87,6 +99,19 @@ public class AdminService implements UserDetailsService {
             throw new RuntimeException("Post with id " + postId + " was not found");
         }
         return voteDAO.findAllByPost(postId);
+    }
+
+    public List<CommentDTO> getAllComments() {
+        return commentDAO.findAll().stream().map(comment -> commentMapper.EntityToDto(comment)).collect(Collectors.toList());
+    }
+
+    public List<ForumAnswerDTO> getAllForumAnswers() {
+        List<ForumAnswerDTO> resultForumAnswers = new ArrayList<>();
+        List<ForumAnswer> forumAnswers = forumAnswerDAO.findAll();
+        for (ForumAnswer forumAnswer : forumAnswers) {
+            resultForumAnswers.add(forumAnswerMapper.EntityToDto(forumAnswer));
+        }
+        return resultForumAnswers;
     }
 
     public List<com.bhumi.backend.entity.User> getAllUsers() {
@@ -137,6 +162,33 @@ public class AdminService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> getAuthorities(String role) {
         return singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    public List<Video> getAllVideos() {
+        return videoDAO.findAllByOrderByUploadedAsc();
+    }
+
+    public Video getVideoById(Long id) {
+        return videoDAO.findById(id).orElseThrow(() -> new RuntimeException("Video by id " + id + " was not found"));
+    }
+
+    public boolean existsById(Long id) {
+        return videoDAO.existsById(id);
+    }
+
+    public Video addVideo(Video video) {
+        video.setUploaded(LocalDate.now());
+        return videoDAO.save(video);
+    }
+
+    public Video updateVideo(Video video) {
+        // Video original = getVideoById(video.getId());
+        // video.setUploaded(original.getUploaded());
+        return videoDAO.save(video);
+    }
+
+    public void deleteVideoById(Long id) {
+        videoDAO.deleteById(id);
     }
 
     // public ImageDTO getUserImage(Long userId) {
